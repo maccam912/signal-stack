@@ -3,11 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bwcgqvmuemvjt"
-valid=false
+path="res://.godot/imported/Fluid2D.svg-947567c51a8b586a0e695be7cba2d975.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://addons/godot-rapier2d/Fluid2D.svg"
+dest_files=["res://.godot/imported/Fluid2D.svg-947567c51a8b586a0e695be7cba2d975.ctex"]
 
 [params]
 

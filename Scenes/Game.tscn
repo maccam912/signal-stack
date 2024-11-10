@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://btn81bl1by7oi"]
 
-[ext_resource type="Texture2D" uid="uid://dj4unluengiih" path="res://Scenes/Junk/Sprites/turf.webp" id="1_v8erb"]
+[ext_resource type="Texture2D" uid="uid://xfwcouag22f6" path="res://Scenes/Junk/Sprites/turf.webp" id="1_v8erb"]
 [ext_resource type="PackedScene" uid="uid://dgu2m1pdjnmxc" path="res://Scenes/Junk/Umbrella.tscn" id="2_icxam"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_44in6"]
@@ -1647,4 +1647,5 @@ shape = SubResource("RectangleShape2D_6fv8s")
 
 [node name="Umbrella" parent="." instance=ExtResource("2_icxam")]
 position = Vector2(1403, 175)
+rotation = -3.20625
 physics_material_override = SubResource("PhysicsMaterial_r1qle")
