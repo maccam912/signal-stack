@@ -5,6 +5,9 @@ const scenes = [
 		preload("res://Scenes/Junk/Stopsign.tscn"),
 		preload("res://Scenes/Junk/Safe.tscn"),
 		preload("res://Scenes/Junk/Piano.tscn"),
+		preload("res://Scenes/Junk/Robot.tscn"),
+		preload("res://Scenes/Junk/Fence.tscn"),
+		preload("res://Scenes/Junk/Beachball.tscn"),
 	]
 
 # Called when the node enters the scene tree for the first time.
