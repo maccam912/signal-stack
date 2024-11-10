@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cgpvcmciy68kd"]
+
+[ext_resource type="Texture2D" uid="uid://c25hmpxgrun53" path="res://Scenes/Junk/Sprites/piano.webp" id="1_gaj7b"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_22b5l"]
+bounce = 0.2
+
+[node name="Piano" type="RigidBody2D"]
+mass = 40.0
+physics_material_override = SubResource("PhysicsMaterial_22b5l")
+
+[node name="Piano" type="Sprite2D" parent="."]
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("1_gaj7b")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+scale = Vector2(0.4, 0.4)
+polygon = PackedVector2Array(-349, -84, -230, -99, -222, -114, 70, -439, 215, -451, 220, -439, 154, -374, 148, -348, 163, -328, 281, -312, 306, -305, 318, -284, 304, -254, 247, -195, 209, -173, 153, -147, 209, -148, 294, -139, 346, -128, 358, -118, 357, -20, 340, -7, 323, 0, 310, 127, 276, 128, 270, 11, 201, 26, 178, 44, 175, 78, 119, 106, 76, 130, 57, 153, 48, 314, 10, 318, 6, 161, -3, 140, -58, 144, -93, 140, -95, 250, -76, 268, -76, 292, -109, 298, -175, 269, -173, 248, -161, 243, -159, 122, -244, 93, -248, 202, -281, 206, -285, 80, -397, 49, -401, -4, -358, -17, -348, -41, -350, -64)

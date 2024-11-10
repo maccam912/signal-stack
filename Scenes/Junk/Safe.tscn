@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://kithrlv6lqxy"]
+
+[ext_resource type="Texture2D" uid="uid://da32yhdiujkiy" path="res://Scenes/Junk/Sprites/safe.webp" id="1_8300w"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kjqeg"]
+bounce = 0.01
+
+[node name="Safe" type="RigidBody2D"]
+mass = 100.0
+physics_material_override = SubResource("PhysicsMaterial_kjqeg")
+
+[node name="Safe" type="Sprite2D" parent="."]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("1_8300w")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+scale = Vector2(0.2, 0.2)
+polygon = PackedVector2Array(-390, 375, -388, -404, 416, -403, 425, 368, 401, 378, 401, 431, 302, 432, 285, 382, -250, 386, -260, 432, -370, 435, -373, 388)

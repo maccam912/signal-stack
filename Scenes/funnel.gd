@@ -1,6 +1,11 @@
 extends Node2D
 
-const UmbrellaScene = preload("res://Scenes/Junk/Umbrella.tscn")
+const scenes = [
+		preload("res://Scenes/Junk/Umbrella.tscn"),
+		preload("res://Scenes/Junk/Stopsign.tscn"),
+		preload("res://Scenes/Junk/Safe.tscn"),
+		preload("res://Scenes/Junk/Piano.tscn"),
+	]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -11,9 +16,11 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if Input.is_action_just_released("Drop"):
 		# Spawn the thingy
-		var u = UmbrellaScene.instantiate()
-		u.position = position
-		add_sibling(u)
+		# select random scene from scenes
+		var scene = scenes[randi_range(0, len(scenes)-1)]
+		var s = scene.instantiate()
+		s.position = position
+		add_sibling(s)
 	if Input.is_action_pressed("Left"):
 		position.x -= 10
 	if Input.is_action_pressed("Right"):
