@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c0583cab00432f4a981e93cab0c0abda078fdafe16dfe0e8282871a6672bcf9d
-size 323
+@tool
+extends Fluid2D
+
+@export var height := 10:
+	set(value):
+		if height != value:
+			height = value
+			points = create_rectangle_points(width, height)
+	get:
+		return height
+@export var width := 10:
+	set(value):
+		if width != value:
+			width = value
+			points = create_rectangle_points(width, height)
+	get:
+		return width
