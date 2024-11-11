@@ -28,6 +28,7 @@ func _process(delta: float) -> void:
 			var scene = scenes[randi_range(0, len(scenes)-1)]
 			var s = scene.instantiate()
 			s.position = position
+			s.add_to_group("rigid_bodies")  # Add to the group for camera tracking
 			add_sibling(s)
 			last_drop_time = current_time
 	if Input.is_action_pressed("Left"):
