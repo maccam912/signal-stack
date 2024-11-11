@@ -6,7 +6,7 @@
 bounce = 0.3
 
 [node name="Stopsign" type="RigidBody2D"]
-mass = 4.0
+mass = 10.0
 physics_material_override = SubResource("PhysicsMaterial_j2kg6")
 continuous_cd = 2
 contact_monitor = true

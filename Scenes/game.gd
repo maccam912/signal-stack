@@ -10,6 +10,7 @@ var base_height: float = 540.0  # Bottom of the frame
 var min_zoom: float = 1.0
 var zoom_speed: float = 2.0
 var can_interact: bool = true
+var use_damping: bool = false  # New flag to control damping
 
 # Scoring variables
 var antenna_instance: Node = null
@@ -183,11 +184,14 @@ func _start_drag(world_pos: Vector2) -> void:
 			if is_draggable_body(collider):
 				dragged_body = collider
 				
-				# Store original damping values and set new values
+				# Store original damping values
 				original_angular_damp = dragged_body.angular_damp
 				original_linear_damp = dragged_body.linear_damp
-				dragged_body.angular_damp = HELD_ANGULAR_DAMP
-				dragged_body.linear_damp = HELD_LINEAR_DAMP
+				
+				# Only apply damping if use_damping is true
+				if use_damping:
+					dragged_body.angular_damp = HELD_ANGULAR_DAMP
+					dragged_body.linear_damp = HELD_LINEAR_DAMP
 				
 				# Create spring joint
 				drag_joint = DampedSpringJoint2D.new()
@@ -249,6 +253,17 @@ func _physics_process(delta: float) -> void:
 	# Spawn one object per physics frame if we're in spawning mode
 	if is_spawning:
 		spawn_one_object()
+	
+	# Check for objects that are too far from center and despawn them
+	var rigid_bodies = get_tree().get_nodes_in_group("rigid_bodies")
+	for body in rigid_bodies:
+		if body is RigidBody2D:
+			# Skip the antenna since we want to keep it for scoring
+			if body == antenna_instance:
+				continue
+			# Check if object is too far from center on x-axis
+			if abs(body.position.x) > 3000:
+				body.queue_free()
 		
 	# Handle settling and scoring after timer runs out
 	if not can_interact:
@@ -328,3 +343,6 @@ func are_all_objects_sleeping() -> bool:
 			return false
 	
 	return true
+
+func toggle_damping(enabled: bool) -> void:
+	use_damping = enabled

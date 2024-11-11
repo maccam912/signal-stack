@@ -6,6 +6,7 @@
 bounce = 0.3
 
 [node name="Fence" type="RigidBody2D"]
+mass = 10.0
 physics_material_override = SubResource("PhysicsMaterial_mjwo6")
 continuous_cd = 2
 contact_monitor = true

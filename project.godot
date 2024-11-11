@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Signal Stack"
-run/main_scene="res://Scenes/title.tscn"
+run/main_scene="res://Scenes/Game.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -41,7 +41,10 @@ Right={
 
 [physics]
 
+2d/run_on_separate_thread=true
 2d/physics_engine="Rapier2D"
+2d/default_gravity=1960.0
+rapier/solver/length_unit_2d=250.0
 
 [rendering]
 

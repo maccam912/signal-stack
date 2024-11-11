@@ -6,7 +6,7 @@
 bounce = 0.2
 
 [node name="Piano" type="RigidBody2D"]
-mass = 40.0
+mass = 20.0
 physics_material_override = SubResource("PhysicsMaterial_22b5l")
 continuous_cd = 2
 contact_monitor = true

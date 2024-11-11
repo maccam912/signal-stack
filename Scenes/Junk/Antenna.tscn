@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cn2mrgjapkhq6" path="res://Scenes/Junk/Sprites/antenna.webp" id="1_u7n82"]
 
 [node name="Antenna" type="RigidBody2D"]
+mass = 10.0
 
 [node name="Antenna" type="Sprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
