@@ -8,6 +8,9 @@ bounce = 0.3
 [node name="Stopsign" type="RigidBody2D"]
 mass = 4.0
 physics_material_override = SubResource("PhysicsMaterial_j2kg6")
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 1
 
 [node name="Stopsign" type="Sprite2D" parent="."]
 scale = Vector2(0.25, 0.25)

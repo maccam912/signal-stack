@@ -1,21 +1,52 @@
-[gd_scene load_steps=3 format=3 uid="uid://0fqioaaax8ef"]
+[gd_scene load_steps=6 format=3 uid="uid://0fqioaaax8ef"]
 
-[ext_resource type="FontFile" uid="uid://dtegu2sq0qh0n" path="res://Fonts/Doto-ExtraBold.ttf" id="1_4chuo"]
+[ext_resource type="FontFile" uid="uid://b1akcss3aboij" path="res://Fonts/OCRA.ttf" id="2_b4se0"]
+
+[sub_resource type="Gradient" id="Gradient_gx2vy"]
+colors = PackedColorArray(0.576471, 0.576471, 0.576471, 0.313726, 1, 1, 1, 0.313726)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_fftky"]
+gradient = SubResource("Gradient_gx2vy")
 
 [sub_resource type="Theme" id="Theme_xcij1"]
-default_font = ExtResource("1_4chuo")
+default_font = ExtResource("2_b4se0")
+default_font_size = 120
+
+[sub_resource type="Theme" id="Theme_pyux3"]
+default_font = ExtResource("2_b4se0")
 default_font_size = 120
 
 [node name="UI" type="CanvasLayer"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = -9.0
+offset_top = 3.0
+offset_right = 1932.0
+offset_bottom = 164.0
+texture = SubResource("GradientTexture1D_fftky")
 
 [node name="Timer" type="Timer" parent="."]
 
 [node name="Label" type="RichTextLabel" parent="Timer"]
 offset_left = 19.0
 offset_top = 5.0
-offset_right = 422.0
-offset_bottom = 149.0
+offset_right = 517.0
+offset_bottom = 164.0
 theme = SubResource("Theme_xcij1")
+bbcode_enabled = true
 text = "20.00"
+fit_content = true
+scroll_active = false
+
+[node name="Score" type="RichTextLabel" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -1421.0
+offset_top = 13.0
+offset_bottom = 159.0
+grow_horizontal = 0
+theme = SubResource("Theme_pyux3")
+bbcode_enabled = true
 fit_content = true
 scroll_active = false

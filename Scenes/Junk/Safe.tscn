@@ -8,6 +8,9 @@ bounce = 0.01
 [node name="Safe" type="RigidBody2D"]
 mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_kjqeg")
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 1
 
 [node name="Safe" type="Sprite2D" parent="."]
 scale = Vector2(0.2, 0.2)

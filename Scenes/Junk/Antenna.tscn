@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://ph8po370jfw4"]
+
+[ext_resource type="Texture2D" uid="uid://cn2mrgjapkhq6" path="res://Scenes/Junk/Sprites/antenna.webp" id="1_u7n82"]
+
+[node name="Antenna" type="RigidBody2D"]
+
+[node name="Antenna" type="Sprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_u7n82")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-132, -20, -92, -34, -91, -78, 110, -148, 127, -139, 129, -51, 114, -33, 28, 6, 28, 62, 117, 85, 117, 106, 1, 145, -121, 119, -120, 96, -16, 67, -16, 20, -77, 46, -88, 40, -90, -6, -121, 9, -134, -5)

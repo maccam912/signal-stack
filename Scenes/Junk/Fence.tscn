@@ -7,6 +7,9 @@ bounce = 0.3
 
 [node name="Fence" type="RigidBody2D"]
 physics_material_override = SubResource("PhysicsMaterial_mjwo6")
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 1
 
 [node name="Fence" type="Sprite2D" parent="."]
 scale = Vector2(0.4, 0.4)

@@ -9,6 +9,9 @@ bounce = 0.7
 [node name="Beachball" type="RigidBody2D"]
 mass = 0.05
 physics_material_override = SubResource("PhysicsMaterial_b00ds")
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 1
 
 [node name="Beachball" type="Sprite2D" parent="."]
 scale = Vector2(0.15, 0.15)

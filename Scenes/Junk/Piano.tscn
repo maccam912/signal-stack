@@ -8,6 +8,9 @@ bounce = 0.2
 [node name="Piano" type="RigidBody2D"]
 mass = 40.0
 physics_material_override = SubResource("PhysicsMaterial_22b5l")
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 1
 
 [node name="Piano" type="Sprite2D" parent="."]
 scale = Vector2(0.4, 0.4)

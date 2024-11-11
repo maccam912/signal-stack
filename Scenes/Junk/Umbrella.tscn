@@ -8,6 +8,9 @@ bounce = 0.1
 [node name="Umbrella" type="RigidBody2D"]
 mass = 0.5
 physics_material_override = SubResource("PhysicsMaterial_q41xd")
+continuous_cd = 2
+contact_monitor = true
+max_contacts_reported = 1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.2, 0.2)
