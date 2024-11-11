@@ -10,7 +10,7 @@ var base_height: float = 540.0  # Bottom of the frame
 var min_zoom: float = 1.0
 var zoom_speed: float = 2.0
 var can_interact: bool = true
-var use_damping: bool = false  # New flag to control damping
+var use_damping: bool = true
 
 # Scoring variables
 var antenna_instance: Node = null
@@ -23,17 +23,8 @@ var settling_started: bool = false
 
 # Dragging variables
 var dragged_body: RigidBody2D = null
-var drag_joint: DampedSpringJoint2D = null
-var original_angular_damp: float = 0.0  # Store original angular damp value
-var original_linear_damp: float = 0.0   # Store original linear damp value
-
-# Spring properties
-const SPRING_STIFFNESS = 1000.0  # Controls how "rigid" the spring is
-const SPRING_DAMPING = 30.0     # Controls how quickly oscillations settle
-const REST_LENGTH = 10.0       # The spring's rest length
-const MAX_LENGTH = 200.0       # Maximum length before spring maxes out
-const HELD_ANGULAR_DAMP = 10.0  # Angular damping while held
-const HELD_LINEAR_DAMP = 5.0   # Linear damping while held
+var mouse_joint: DampedSpringJoint2D = null
+var mouse_body: StaticBody2D = null
 
 # Spawn stack state
 var is_spawning = false
@@ -62,6 +53,10 @@ func _ready() -> void:
 	timer.one_shot = true
 	timer.start()
 	timer.timeout.connect(_on_timer_timeout)
+	
+	# Create mouse body for spring joint
+	mouse_body = StaticBody2D.new()
+	add_child(mouse_body)
 
 func spawn_one_object() -> void:
 	var step_size = 5  # Move down 5 pixels at a time
@@ -184,62 +179,28 @@ func _start_drag(world_pos: Vector2) -> void:
 			if is_draggable_body(collider):
 				dragged_body = collider
 				
-				# Store original damping values
-				original_angular_damp = dragged_body.angular_damp
-				original_linear_damp = dragged_body.linear_damp
-				
-				# Only apply damping if use_damping is true
-				if use_damping:
-					dragged_body.angular_damp = HELD_ANGULAR_DAMP
-					dragged_body.linear_damp = HELD_LINEAR_DAMP
-				
 				# Create spring joint
-				drag_joint = DampedSpringJoint2D.new()
-				add_child(drag_joint)
-				drag_joint.length = REST_LENGTH
-				drag_joint.rest_length = REST_LENGTH
-				drag_joint.stiffness = SPRING_STIFFNESS
-				drag_joint.damping = SPRING_DAMPING
-				drag_joint.position = world_pos
-				drag_joint.node_a = dragged_body.get_path()
+				mouse_joint = DampedSpringJoint2D.new()
+				mouse_joint.length = 0
+				mouse_joint.stiffness = 64  # Adjust this value to change spring strength
+				mouse_joint.damping = 4     # Adjust this value to change spring damping
 				
-				# Create temporary static body for the joint
-				var static_body = StaticBody2D.new()
-				add_child(static_body)
-				static_body.position = world_pos
-				drag_joint.node_b = static_body.get_path()
-				
+				# Set up the joint connections
+				mouse_body.global_position = world_pos
+				add_child(mouse_joint)
+				mouse_joint.node_a = mouse_body.get_path()
+				mouse_joint.node_b = dragged_body.get_path()
 				break
 
 func _update_drag(world_pos: Vector2) -> void:
-	if drag_joint and drag_joint.node_b:
-		# Update the static body position
-		var static_body = get_node(drag_joint.node_b)
-		
-		# Calculate the direction and distance to the target
-		var direction = (world_pos - dragged_body.global_position).normalized()
-		var distance = world_pos.distance_to(dragged_body.global_position)
-		
-		# Limit the maximum distance to prevent excessive stretching
-		if distance > MAX_LENGTH:
-			world_pos = dragged_body.global_position + direction * MAX_LENGTH
-		
-		static_body.global_position = world_pos
+	if dragged_body and mouse_body:
+		mouse_body.global_position = world_pos
 
 func _end_drag() -> void:
-	if drag_joint:
-		# Restore original damping values
-		if dragged_body:
-			dragged_body.angular_damp = original_angular_damp
-			dragged_body.linear_damp = original_linear_damp
-		
-		# Clean up the static body
-		var static_body = get_node(drag_joint.node_b)
-		static_body.queue_free()
-		
-		# Clean up the joint
-		drag_joint.queue_free()
-		drag_joint = null
+	if dragged_body:
+		if mouse_joint:
+			mouse_joint.queue_free()
+			mouse_joint = null
 		dragged_body = null
 
 var stack_spawned_count = 0
