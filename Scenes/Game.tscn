@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://btn81bl1by7oi"]
+[gd_scene load_steps=6 format=3 uid="uid://btn81bl1by7oi"]
 
 [ext_resource type="Script" path="res://Scenes/game.gd" id="1_fgcac"]
 [ext_resource type="Texture2D" uid="uid://xfwcouag22f6" path="res://Scenes/Junk/Sprites/turf.webp" id="1_v8erb"]
+[ext_resource type="PackedScene" uid="uid://0fqioaaax8ef" path="res://Scenes/ui.tscn" id="3_mffox"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_bad3i"]
 
@@ -75,3 +76,5 @@ shape = SubResource("RectangleShape2D_625b6")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RightSide"]
 position = Vector2(1013, 272)
 shape = SubResource("RectangleShape2D_625b6")
+
+[node name="UI" parent="." instance=ExtResource("3_mffox")]

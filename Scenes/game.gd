@@ -1,6 +1,9 @@
 extends Node2D
 
 @onready var camera: Camera2D = $Camera2D
+@onready var timer: Timer = $UI/Timer
+@onready var timer_label: RichTextLabel = $UI/Timer/Label
+
 var highest_y: float = 0.0
 var base_height: float = 540.0  # Bottom of the frame
 var min_zoom: float = 1.0
@@ -9,7 +12,6 @@ var zoom_speed: float = 2.0
 # Dragging variables
 var dragged_body: RigidBody2D = null
 var drag_joint: DampedSpringJoint2D = null
-var touch_index: int = -1  # For touch input tracking
 var original_angular_damp: float = 0.0  # Store original angular damp value
 var original_linear_damp: float = 0.0   # Store original linear damp value
 
@@ -34,6 +36,11 @@ const scenes = [
 func _ready() -> void:
 	# Initialize camera position
 	camera.position = Vector2(0, 0)  # Center horizontally, top at 0
+	
+	# Initialize timer
+	timer.wait_time = 20.0
+	timer.one_shot = true
+	timer.start()
 	
 	# Spawn initial objects in a 4x5 grid
 	var x_spacing = 1920.0 / 5  # 5 columns
@@ -63,19 +70,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	
 	# Handle mouse motion while dragging
 	elif event is InputEventMouseMotion and dragged_body:
-		_update_drag(get_world_position(event.position))
-	
-	# Handle touch input
-	elif event is InputEventScreenTouch:
-		if event.pressed and touch_index == -1:
-			touch_index = event.index
-			_start_drag(get_world_position(event.position))
-		elif !event.pressed and event.index == touch_index:
-			touch_index = -1
-			_end_drag()
-	
-	# Handle touch drag
-	elif event is InputEventScreenDrag and event.index == touch_index:
 		_update_drag(get_world_position(event.position))
 
 func get_world_position(screen_pos: Vector2) -> Vector2:
@@ -164,6 +158,10 @@ func _end_drag() -> void:
 		dragged_body = null
 
 func _process(delta: float) -> void:
+	# Update timer display
+	var time_left = timer.time_left
+	timer_label.text = "%.2f" % time_left
+	
 	# Find highest rigid body
 	var new_highest_y: float = min(-540, find_highest_rigid_body())
 	# fake it out, give us 20% above the highest

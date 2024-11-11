@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://0fqioaaax8ef"]
+
+[ext_resource type="FontFile" uid="uid://dtegu2sq0qh0n" path="res://Fonts/Doto-ExtraBold.ttf" id="1_4chuo"]
+
+[sub_resource type="Theme" id="Theme_xcij1"]
+default_font = ExtResource("1_4chuo")
+default_font_size = 120
+
+[node name="UI" type="CanvasLayer"]
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Label" type="RichTextLabel" parent="Timer"]
+offset_left = 19.0
+offset_top = 5.0
+offset_right = 422.0
+offset_bottom = 149.0
+theme = SubResource("Theme_xcij1")
+text = "20.00"
+fit_content = true
+scroll_active = false
