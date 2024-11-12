@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://y5dynchcp8ir" path="res://Scenes/Junk/Sprites/stopsign.webp" id="1_yyaej"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_j2kg6"]
-bounce = 0.3
 
 [node name="Stopsign" type="RigidBody2D"]
 mass = 10.0

@@ -1,9 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://ph8po370jfw4"]
+[gd_scene load_steps=3 format=3 uid="uid://ph8po370jfw4"]
 
 [ext_resource type="Texture2D" uid="uid://cn2mrgjapkhq6" path="res://Scenes/Junk/Sprites/antenna.webp" id="1_u7n82"]
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r2qxf"]
+
 [node name="Antenna" type="RigidBody2D"]
 mass = 10.0
+physics_material_override = SubResource("PhysicsMaterial_r2qxf")
 
 [node name="Antenna" type="Sprite2D" parent="."]
 scale = Vector2(0.3, 0.3)

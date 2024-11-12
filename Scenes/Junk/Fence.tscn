@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://pr6p02pa3oef" path="res://Scenes/Junk/Sprites/fence.webp" id="1_tjim2"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_mjwo6"]
-bounce = 0.3
 
 [node name="Fence" type="RigidBody2D"]
 mass = 10.0

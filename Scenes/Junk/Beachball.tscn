@@ -3,8 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://blafolnp8uuic" path="res://Scenes/Junk/Sprites/beachball.webp" id="1_red34"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b00ds"]
-friction = 0.2
-bounce = 0.7
 
 [node name="Beachball" type="RigidBody2D"]
 mass = 5.0

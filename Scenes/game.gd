@@ -42,13 +42,13 @@ var x_pos = 0
 var last_spawn_height = 0  # Track the last object's final position
 
 const scenes = [
-	preload("res://Scenes/Junk/Umbrella.tscn"),
-	preload("res://Scenes/Junk/Stopsign.tscn"),
-	preload("res://Scenes/Junk/Safe.tscn"),
-	preload("res://Scenes/Junk/Piano.tscn"),
+	#preload("res://Scenes/Junk/Umbrella.tscn"),
+	#preload("res://Scenes/Junk/Stopsign.tscn"),
+	#preload("res://Scenes/Junk/Safe.tscn"),
+	#preload("res://Scenes/Junk/Piano.tscn"),
 	#preload("res://Scenes/Junk/Robot.tscn"),
-	preload("res://Scenes/Junk/Fence.tscn"),
-	preload("res://Scenes/Junk/Beachball.tscn"),
+	#preload("res://Scenes/Junk/Fence.tscn"),
+	#preload("res://Scenes/Junk/Beachball.tscn"),
 ]
 
 const antenna = preload("res://Scenes/Junk/Antenna.tscn")

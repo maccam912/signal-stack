@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://da32yhdiujkiy" path="res://Scenes/Junk/Sprites/safe.webp" id="1_8300w"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kjqeg"]
-bounce = 0.01
 
 [node name="Safe" type="RigidBody2D"]
 mass = 20.0
