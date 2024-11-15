@@ -27,9 +27,9 @@ var original_angular_damp: float = 0.0  # Store original angular damp value
 var original_linear_damp: float = 0.0   # Store original linear damp value
 
 # Spring properties
-const SPRING_STIFFNESS = 1000.0  # Controls how "rigid" the spring is
-const SPRING_DAMPING = 30.0     # Controls how quickly oscillations settle
-const REST_LENGTH = 10.0       # The spring's rest length
+const SPRING_STIFFNESS = 400.0  # Reduced stiffness for smoother movement
+const SPRING_DAMPING = 50.0     # Increased damping to prevent oscillation
+const REST_LENGTH = 0.0        # Spring should try to stay at mouse position
 const MAX_LENGTH = 200.0       # Maximum length before spring maxes out
 const HELD_ANGULAR_DAMP = 10.0  # Angular damping while held
 const HELD_LINEAR_DAMP = 5.0   # Linear damping while held
