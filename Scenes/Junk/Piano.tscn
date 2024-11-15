@@ -3,9 +3,10 @@
 [ext_resource type="Texture2D" uid="uid://c25hmpxgrun53" path="res://Scenes/Junk/Sprites/piano.webp" id="1_gaj7b"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_22b5l"]
+bounce = 0.1
 
 [node name="Piano" type="RigidBody2D"]
-mass = 20.0
+mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_22b5l")
 continuous_cd = 2
 contact_monitor = true

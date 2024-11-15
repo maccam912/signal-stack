@@ -15,11 +15,10 @@ var use_damping: bool = false  # New flag to control damping
 # Scoring variables
 var antenna_instance: Node = null
 var last_antenna_y: float = 0.0
-var stable_time: float = 0.0
-var score_calculated: bool = false
-var settling_time: float = 0.0
-var max_settling_time: float = 10.0
-var settling_started: bool = false
+var settling_started = false
+var settling_time = 0.0
+var max_settling_time = 10.0
+var score_calculated = false
 
 # Dragging variables
 var dragged_body: RigidBody2D = null
@@ -38,17 +37,16 @@ const HELD_LINEAR_DAMP = 5.0   # Linear damping while held
 # Spawn stack state
 var is_spawning = false
 var objects_to_spawn = 20
-var x_pos = 0
-var last_spawn_height = 0  # Track the last object's final position
+var grid_points: Array[Vector2] = []
 
 const scenes = [
-	#preload("res://Scenes/Junk/Umbrella.tscn"),
-	#preload("res://Scenes/Junk/Stopsign.tscn"),
-	#preload("res://Scenes/Junk/Safe.tscn"),
-	#preload("res://Scenes/Junk/Piano.tscn"),
+	preload("res://Scenes/Junk/Umbrella.tscn"),
+	preload("res://Scenes/Junk/Stopsign.tscn"),
+	preload("res://Scenes/Junk/Safe.tscn"),
+	preload("res://Scenes/Junk/Piano.tscn"),
 	#preload("res://Scenes/Junk/Robot.tscn"),
-	#preload("res://Scenes/Junk/Fence.tscn"),
-	#preload("res://Scenes/Junk/Beachball.tscn"),
+	preload("res://Scenes/Junk/Fence.tscn"),
+	preload("res://Scenes/Junk/Beachball.tscn"),
 ]
 
 const antenna = preload("res://Scenes/Junk/Antenna.tscn")
@@ -62,114 +60,100 @@ func _ready() -> void:
 	timer.one_shot = true
 	timer.start()
 	timer.timeout.connect(_on_timer_timeout)
+	
+	# Generate grid points
+	generate_grid_points()
+	spawn_grid_objects()
 
-func spawn_one_object() -> void:
-	var step_size = 5  # Move down 5 pixels at a time
+func generate_grid_points() -> void:
+	var rows = 10  # More rows for increased vertical spacing
+	var cols = 2   # Only two columns as requested
+	var x_start = -800.0  # Start from far left
+	var x_spacing = 400.0  # Space between columns
+	var y_start = 0.0
+	var y_end = -2000.0   # Increased vertical range
 	
-	# Calculate start height based on last object
-	var start_y = last_spawn_height - 1000  # 1000 pixels above last object
-	if objects_to_spawn == 20:  # First object
-		start_y = base_height - 1000  # 1000 pixels above base
+	var y_step = (y_end - y_start) / (rows - 1)
 	
-	# Spawn an item
-	var obj = spawn_random_object(Vector2(x_pos, start_y))
-	# Create a temporary CharacterBody2D for collision testing
-	var test_body = CharacterBody2D.new()
-	add_child(test_body)
+	for i in range(rows):
+		for j in range(cols):
+			var x = x_start + (j * x_spacing)
+			var y = y_start + (i * y_step)
+			grid_points.append(Vector2(x, y))
 	
-	# Copy the collision shape from the spawned object
-	for child in obj.get_children():
-		if child is CollisionShape2D or child is CollisionPolygon2D:
-			var shape_copy = child.duplicate()
-			test_body.add_child(shape_copy)
-	
-	var current_pos = Vector2(x_pos, start_y)
-	var last_good_pos = current_pos
-	var moving = true
-	
-	while moving:
-		# Test moving down by step_size
-		var motion = Vector2(0, step_size)
-		var collision = KinematicCollision2D.new()
-		
-		# Test the move
-		if test_body.test_move(Transform2D(0, current_pos), motion, collision):
-			# Collision detected, use last good position
-			moving = false
-			obj.position = last_good_pos
-			last_spawn_height = last_good_pos.y  # Store the final height
-		else:
-			# No collision, update positions and continue down
-			last_good_pos = current_pos
-			current_pos += motion
-			if current_pos.y >= base_height:  # Stop if we hit the bottom
-				moving = false
-				obj.position = last_good_pos
-				last_spawn_height = last_good_pos.y  # Store the final height
-	
-	# Clean up the test body
-	test_body.queue_free()
-	
-	# Decrease remaining objects counter
-	objects_to_spawn -= 1
-	if objects_to_spawn <= 0:
-		is_spawning = false
-
-func spawn_stack() -> void:
-	is_spawning = true
-	objects_to_spawn = 20
-	x_pos = 0  # Center horizontally
-	last_spawn_height = base_height  # Reset last spawn height
-	
-func spawn_random_object(pos: Vector2) -> Node:
-	var scene
-	if objects_to_spawn > 1:
-		scene = scenes[randi_range(0, len(scenes)-1)]
-	else:
-		scene = antenna
-		antenna_instance = scene.instantiate()
-		antenna_instance.position = pos
+	# Spawn antenna at the top
+	antenna_instance = antenna.instantiate()
+	add_child(antenna_instance)
+	antenna_instance.position = Vector2(0, y_end - 100)  # Place antenna above the highest row
+	if antenna_instance is RigidBody2D:
 		antenna_instance.add_to_group("rigid_bodies")
-		add_child(antenna_instance)
-		return antenna_instance
-	var s = scene.instantiate()
-	s.position = pos
-	s.add_to_group("rigid_bodies")
-	add_child(s)
-	return s
+
+func spawn_grid_objects() -> void:
+	for point in grid_points:
+		spawn_random_object(point)
+
+func spawn_random_object(pos: Vector2) -> Node2D:
+	var scene = scenes.pick_random()
+	var obj = scene.instantiate()
+	add_child(obj)
+	
+	# Set random rotation
+	obj.rotation = randf_range(0, PI * 2)
+	
+	# Try to find a non-colliding position
+	var max_attempts = 10
+	var attempt = 0
+	var found_valid_pos = false
+	var test_pos = pos
+	
+	while attempt < max_attempts and not found_valid_pos:
+		obj.position = test_pos
+		
+		# Check for collisions
+		if obj is CharacterBody2D:
+			# Test move and check for collision
+			obj.move_and_collide(Vector2.ZERO)
+			found_valid_pos = not obj.get_slide_collision_count()
+		else:
+			# For non-CharacterBody2D nodes, use area overlap test
+			var space = get_world_2d().direct_space_state
+			var query = PhysicsShapeQueryParameters2D.new()
+			query.transform = obj.global_transform
+			if obj.get_node_or_null("CollisionShape2D"):
+				query.shape = obj.get_node("CollisionShape2D").shape
+				var result = space.intersect_shape(query)
+				found_valid_pos = result.is_empty()
+			else:
+				found_valid_pos = true  # No collision shape, assume it's fine
+		
+		if not found_valid_pos:
+			# Try a slightly offset position
+			test_pos = pos + Vector2(
+				randf_range(-50, 50),
+				randf_range(-50, 50)
+			)
+			attempt += 1
+	
+	if obj is RigidBody2D:
+		obj.add_to_group("rigid_bodies")
+	
+	return obj
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not can_interact:
 		return
 		
-	# Handle mouse input
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
+			print("Left mouse button event - pressed: ", event.pressed)
 			if event.pressed:
-				_start_drag(get_world_position(event.position))
+				print("Mouse position: ", get_global_mouse_position())
+				_start_drag(get_global_mouse_position())
 			else:
 				_end_drag()
-	
-	# Handle mouse motion while dragging
-	elif event is InputEventMouseMotion and dragged_body:
-		_update_drag(get_world_position(event.position))
-
-func get_world_position(screen_pos: Vector2) -> Vector2:
-	# Convert screen coordinates to world coordinates
-	return get_canvas_transform().affine_inverse() * screen_pos
-
-func is_draggable_body(node: Node) -> bool:
-	# Check if the node itself is a RigidBody2D in the rigid_bodies group
-	if node is RigidBody2D and node.is_in_group("rigid_bodies"):
-		return true
-	
-	# Check if the node is a RigidBody2D and its parent is in the rigid_bodies group
-	if node is RigidBody2D and node.get_parent().is_in_group("rigid_bodies"):
-		return true
-	
-	return false
 
 func _start_drag(world_pos: Vector2) -> void:
+	print("Starting drag at position: ", world_pos)
 	var space = get_world_2d().direct_space_state
 	var query = PhysicsPointQueryParameters2D.new()
 	query.position = world_pos
@@ -177,82 +161,72 @@ func _start_drag(world_pos: Vector2) -> void:
 	query.collide_with_bodies = true
 	
 	var result = space.intersect_point(query)
-	if result:
-		for collision in result:
-			var collider = collision.collider
-			# Check if the collider is draggable
-			if is_draggable_body(collider):
-				dragged_body = collider
-				
-				# Store original damping values
-				original_angular_damp = dragged_body.angular_damp
-				original_linear_damp = dragged_body.linear_damp
-				
-				# Only apply damping if use_damping is true
-				if use_damping:
-					dragged_body.angular_damp = HELD_ANGULAR_DAMP
-					dragged_body.linear_damp = HELD_LINEAR_DAMP
-				
-				# Create spring joint
-				drag_joint = DampedSpringJoint2D.new()
-				add_child(drag_joint)
-				drag_joint.length = REST_LENGTH
-				drag_joint.rest_length = REST_LENGTH
-				drag_joint.stiffness = SPRING_STIFFNESS
-				drag_joint.damping = SPRING_DAMPING
-				drag_joint.position = world_pos
-				drag_joint.node_a = dragged_body.get_path()
-				
-				# Create temporary static body for the joint
-				var static_body = StaticBody2D.new()
-				add_child(static_body)
-				static_body.position = world_pos
-				drag_joint.node_b = static_body.get_path()
-				
-				break
-
-func _update_drag(world_pos: Vector2) -> void:
-	if drag_joint and drag_joint.node_b:
-		# Update the static body position
-		var static_body = get_node(drag_joint.node_b)
-		
-		# Calculate the direction and distance to the target
-		var direction = (world_pos - dragged_body.global_position).normalized()
-		var distance = world_pos.distance_to(dragged_body.global_position)
-		
-		# Limit the maximum distance to prevent excessive stretching
-		if distance > MAX_LENGTH:
-			world_pos = dragged_body.global_position + direction * MAX_LENGTH
-		
-		static_body.global_position = world_pos
+	print("Physics query results: ", result.size(), " objects found")
+	
+	if result.size() > 0:
+		var body = result[0].collider
+		print("Found collider: ", body.name, " of type: ", body.get_class())
+		if body is RigidBody2D:
+			print("Successfully grabbed RigidBody2D")
+			dragged_body = body
+			
+			# Store original damping values
+			original_angular_damp = dragged_body.angular_damp
+			original_linear_damp = dragged_body.linear_damp
+			
+			# Apply high damping while dragging
+			dragged_body.angular_damp = HELD_ANGULAR_DAMP
+			dragged_body.linear_damp = HELD_LINEAR_DAMP
+			
+			# Lock rotation while dragging
+			dragged_body.lock_rotation = true
+			
+			# Create anchor point for the joint
+			var anchor = StaticBody2D.new()
+			add_child(anchor)
+			anchor.global_position = world_pos
+			
+			# Create spring joint
+			drag_joint = DampedSpringJoint2D.new()
+			add_child(drag_joint)
+			
+			# Connect the joint between the static anchor and the dragged body
+			drag_joint.node_a = anchor.get_path()
+			drag_joint.node_b = dragged_body.get_path()
+			
+			# Configure joint properties
+			drag_joint.length = 0  # Want the object to try to stay at mouse position
+			drag_joint.rest_length = 0
+			drag_joint.stiffness = SPRING_STIFFNESS
+			drag_joint.damping = SPRING_DAMPING
+			
+			# Set the anchor points relative to each body
+			drag_joint.bias = 0.9  # High bias for better following
+			
+			print("Joint created between anchor and body")
+		else:
+			print("Found object is not a RigidBody2D")
+	else:
+		print("No objects found at click position")
 
 func _end_drag() -> void:
-	if drag_joint:
+	print("Ending drag")
+	if dragged_body:
+		print("Releasing body: ", dragged_body.name)
 		# Restore original damping values
-		if dragged_body:
-			dragged_body.angular_damp = original_angular_damp
-			dragged_body.linear_damp = original_linear_damp
-		
-		# Clean up the static body
-		var static_body = get_node(drag_joint.node_b)
-		static_body.queue_free()
-		
-		# Clean up the joint
+		dragged_body.angular_damp = original_angular_damp
+		dragged_body.linear_damp = original_linear_damp
+		dragged_body.lock_rotation = false
+		dragged_body = null
+	
+	if drag_joint:
+		print("Removing drag joint")
 		drag_joint.queue_free()
 		drag_joint = null
-		dragged_body = null
 
-var stack_spawned_count = 0
-
-func _physics_process(delta: float) -> void:
-	if stack_spawned_count < 2:
-		stack_spawned_count += 1
-		if stack_spawned_count == 2:
-			spawn_stack()
-	
-	# Spawn one object per physics frame if we're in spawning mode
-	if is_spawning:
-		spawn_one_object()
+func _physics_process(_delta: float) -> void:
+	if drag_joint and dragged_body:
+		_update_drag_position()
 	
 	# Check for objects that are too far from center and despawn them
 	var rigid_bodies = get_tree().get_nodes_in_group("rigid_bodies")
@@ -269,26 +243,21 @@ func _physics_process(delta: float) -> void:
 	if not can_interact:
 		if not settling_started:
 			settling_started = true
+			settling_time = 0.0  # Reset settling time
 			score_label.text = "[right][color=#990000]Settling...[/color][/right]"
+			return  # Wait for next frame before starting to check settling
 			
-		settling_time += delta
+		settling_time += _delta
 		# Check if objects have settled or max time reached
-		if are_all_objects_sleeping() or settling_time >= max_settling_time:
-			if not score_calculated and antenna_instance:
-				var current_y = antenna_instance.position.y
-				if abs(current_y - last_antenna_y) < 1.0:  # Check if position is almost the same
-					stable_time += delta
-					if stable_time >= 1.0:  # If stable for 1 second
-						var height = base_height - current_y  # Convert y coordinate to height
-						# Convert pixels to meters (500 pixels = 2 meters)
-						var height_meters = (height / 500.0) * 2.0
-						score_label.text = "[right][color=#990000]Score: %.2f m[/color][/right]" % height_meters
-						score_calculated = true
-				else:
-					stable_time = 0.0  # Reset stability timer if moving too much
-				last_antenna_y = current_y
+		if (are_all_objects_sleeping() or settling_time >= max_settling_time) and not score_calculated:
+			if antenna_instance:
+				var height = base_height - antenna_instance.position.y  # Convert y coordinate to height
+				# Convert pixels to meters (500 pixels = 2 meters)
+				var height_meters = (height / 500.0) * 2.0
+				score_label.text = "[right][color=#990000]Score: %.2f m[/color][/right]" % height_meters
+				score_calculated = true
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# Update timer display
 	var time_left = timer.time_left
 	timer_label.text = "[color=#990000]%.2f[/color]" % time_left
@@ -300,18 +269,18 @@ func _process(delta: float) -> void:
 	
 	new_highest_y = base_height - height
 	# Update highest_y with some smoothing
-	highest_y = lerp(highest_y, new_highest_y, delta * zoom_speed)
+	highest_y = lerp(highest_y, new_highest_y, _delta * zoom_speed)
 	
 	# Calculate required zoom to keep bottom at base_height
 	# and show up to the highest object
 	var height_needed = base_height - highest_y
 	var target_zoom: float = min(min_zoom, 1080.0 / height_needed)  # Changed to min() to allow zooming out
 	# Smoothly adjust zoom
-	camera.zoom = camera.zoom.lerp(Vector2(target_zoom, target_zoom), delta * zoom_speed)
+	camera.zoom = camera.zoom.lerp(Vector2(target_zoom, target_zoom), _delta * zoom_speed)
 	
 	# Adjust camera y position to maintain bottom edge at base_height
 	var target_y: float = (base_height + highest_y) / 2.0
-	camera.position.y = lerp(camera.position.y, target_y, delta * zoom_speed)
+	camera.position.y = lerp(camera.position.y, target_y, _delta * zoom_speed)
 	
 func find_highest_rigid_body() -> float:
 	var highest: float = 540
@@ -346,3 +315,10 @@ func are_all_objects_sleeping() -> bool:
 
 func toggle_damping(enabled: bool) -> void:
 	use_damping = enabled
+
+func _update_drag_position() -> void:
+	if drag_joint and dragged_body:
+		var mouse_pos = get_global_mouse_position()
+		# Update the anchor position
+		var anchor = get_node(drag_joint.node_a)
+		anchor.global_position = mouse_pos

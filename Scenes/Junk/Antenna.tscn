@@ -5,7 +5,7 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r2qxf"]
 
 [node name="Antenna" type="RigidBody2D"]
-mass = 10.0
+mass = 3.0
 physics_material_override = SubResource("PhysicsMaterial_r2qxf")
 
 [node name="Antenna" type="Sprite2D" parent="."]
