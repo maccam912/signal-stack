@@ -36,6 +36,8 @@ jobs:
         run: |
           mkdir -p ./build/web
           ./godot --headless --export-release "Web" ./build/web/index.html
+          # Ensure COOP and COEP headers are set in the exported HTML file
+          sed -i 's/<head>/<head>\n    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">\n    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">/' ./build/web/index.html
 
       - name: Download Butler
         run: |
