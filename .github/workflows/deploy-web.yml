@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy to Itch.io
 
 on:
   push:
@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
   id-token: write
 
 jobs:
@@ -38,8 +37,16 @@ jobs:
           mkdir -p ./build/web
           ./godot --headless --export-release "Web" ./build/web/index.html
 
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: build/web # The folder the action should deploy.
-          branch: gh-pages # The branch the action should deploy to.
+      - name: Download Butler
+        run: |
+          curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          unzip butler.zip
+          chmod +x butler
+          ./butler -V
+
+      - name: Deploy to itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          ./butler push ./build/web maccam912/signal-stack:web
+          ./butler status maccam912/signal-stack:web
