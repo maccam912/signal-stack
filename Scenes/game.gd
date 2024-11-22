@@ -58,6 +58,7 @@ const scenes = [
 	#preload("res://Scenes/Junk/Robot.tscn"),
 	preload("res://Scenes/Junk/Fence.tscn"),
 	preload("res://Scenes/Junk/Beachball.tscn"),
+	preload("res://Scenes/Junk/couch.tscn"),
 ]
 
 const antenna = preload("res://Scenes/Junk/Antenna.tscn")
@@ -166,6 +167,10 @@ func _on_rigid_body_collision(other_body: RigidBody2D, this_body: RigidBody2D):
 		return
 		
 	if this_body != last_dragged_body and other_body != last_dragged_body:
+		return
+	
+	# Skip if either body is not in the rigid_bodies group
+	if not this_body.is_in_group("rigid_bodies") or not other_body.is_in_group("rigid_bodies"):
 		return
 		
 	# Get which body is the last dragged one

@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://btquud5ura1hy"]
+
+[ext_resource type="Texture2D" uid="uid://dlaiytyekqkfg" path="res://Scenes/Junk/Sprites/ComfyUI_00048_.png" id="1_27eho"]
+
+[node name="Couch" type="RigidBody2D"]
+
+[node name="ComfyUi00048" type="Sprite2D" parent="."]
+position = Vector2(-5, -131)
+texture = ExtResource("1_27eho")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-351, 120, -351, -15, -282, -36, -270, -100, 269, -100, 277, -36, 352, -17, 352, 181, 264, 125, -273, 125, -350, 182)
