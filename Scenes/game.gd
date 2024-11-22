@@ -25,6 +25,8 @@ var dragged_body: RigidBody2D = null
 var drag_joint: DampedSpringJoint2D = null
 var original_angular_damp: float = 0.0  # Store original angular damp value
 var original_linear_damp: float = 0.0   # Store original linear damp value
+var last_dragged_body: RigidBody2D = null  # Track the most recently interacted object
+var waiting_for_pin: bool = false  # True when an object is ready to create its next pin
 
 # Spring properties
 const SPRING_STIFFNESS = 400.0  # Reduced stiffness for smoother movement
@@ -33,6 +35,15 @@ const REST_LENGTH = 0.0        # Spring should try to stay at mouse position
 const MAX_LENGTH = 200.0       # Maximum length before spring maxes out
 const HELD_ANGULAR_DAMP = 10.0  # Angular damping while held
 const HELD_LINEAR_DAMP = 5.0   # Linear damping while held
+
+# Joint creation properties
+const PIN_JOINT_BIAS = 0.2  # Reduced bias for more flexibility (was 0.3)
+const PIN_JOINT_SOFTNESS = 1.0  # Added softness to allow stretching
+const PIN_JOINT_LENGTH = 20.0  # Allow some length variation
+const MAX_JOINTS_PER_BODY = 3  # Limit joints per object to prevent over-constraint
+
+# Dictionary to track joints between bodies
+var body_joints = {}
 
 # Spawn stack state
 var is_spawning = false
@@ -64,6 +75,9 @@ func _ready() -> void:
 	# Generate grid points
 	generate_grid_points()
 	spawn_grid_objects()
+	
+	# Connect all existing rigid bodies
+	connect_rigid_bodies()
 
 func generate_grid_points() -> void:
 	var rows = 10  # More rows for increased vertical spacing
@@ -139,6 +153,54 @@ func spawn_random_object(pos: Vector2) -> Node2D:
 	
 	return obj
 
+func connect_rigid_bodies():
+	var rigid_bodies = get_tree().get_nodes_in_group("rigid_bodies")
+	for body in rigid_bodies:
+		if not body.is_connected("body_entered", _on_rigid_body_collision):
+			body.body_entered.connect(_on_rigid_body_collision.bind(body))
+			body_joints[body] = []
+
+func _on_rigid_body_collision(other_body: RigidBody2D, this_body: RigidBody2D):
+	# Only create joints if one is the last dragged body AND we're waiting for a pin
+	if not waiting_for_pin:
+		return
+		
+	if this_body != last_dragged_body and other_body != last_dragged_body:
+		return
+		
+	# Get which body is the last dragged one
+	var sticky_body = this_body if this_body == last_dragged_body else other_body
+	var other = this_body if this_body != last_dragged_body else other_body
+	
+	# Skip if these bodies are already connected
+	for joint in body_joints[sticky_body]:
+		if get_node(joint.node_a) == other or get_node(joint.node_b) == other:
+			return
+	
+	# Get collision point (approximate using body positions)
+	var collision_point = (sticky_body.global_position + other.global_position) / 2
+	
+	# Create pin joint
+	var pin = PinJoint2D.new()
+	add_child(pin)
+	pin.global_position = collision_point
+	pin.node_a = sticky_body.get_path()
+	pin.node_b = other.get_path()
+	pin.bias = PIN_JOINT_BIAS
+	pin.softness = PIN_JOINT_SOFTNESS
+	pin.disable_collision = false  # Keep collisions between connected bodies
+	
+	# Store joint reference
+	body_joints[sticky_body].append(pin)
+	body_joints[other].append(pin)
+	
+	# Create a small angular spring effect
+	sticky_body.angular_damp = 3.0
+	other.angular_damp = 3.0
+	
+	# We've created our one pin, so stop waiting
+	waiting_for_pin = false
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not can_interact:
 		return
@@ -157,57 +219,54 @@ func _start_drag(world_pos: Vector2) -> void:
 	var space = get_world_2d().direct_space_state
 	var query = PhysicsPointQueryParameters2D.new()
 	query.position = world_pos
-	query.collision_mask = 1  # Adjust based on your collision layers
-	query.collide_with_bodies = true
-	
+	query.collision_mask = 1  # Use the appropriate collision mask
 	var result = space.intersect_point(query)
-	print("Physics query results: ", result.size(), " objects found")
 	
-	if result.size() > 0:
-		var body = result[0].collider
-		print("Found collider: ", body.name, " of type: ", body.get_class())
-		if body is RigidBody2D:
-			print("Successfully grabbed RigidBody2D")
-			dragged_body = body
+	if result:
+		var found_object = result[0].collider
+		if found_object is RigidBody2D:
+			dragged_body = found_object
+			last_dragged_body = found_object  # Track the last dragged body
+			waiting_for_pin = false  # Reset pin waiting while dragging
 			
-			# Store original damping values
 			original_angular_damp = dragged_body.angular_damp
 			original_linear_damp = dragged_body.linear_damp
 			
-			# Apply high damping while dragging
+			# Apply held damping
 			dragged_body.angular_damp = HELD_ANGULAR_DAMP
 			dragged_body.linear_damp = HELD_LINEAR_DAMP
 			
-			# Lock rotation while dragging
-			dragged_body.lock_rotation = true
-			
-			# Create anchor point for the joint
-			var anchor = StaticBody2D.new()
-			add_child(anchor)
-			anchor.global_position = world_pos
-			
-			# Create spring joint
-			drag_joint = DampedSpringJoint2D.new()
-			add_child(drag_joint)
-			
-			# Connect the joint between the static anchor and the dragged body
-			drag_joint.node_a = anchor.get_path()
-			drag_joint.node_b = dragged_body.get_path()
-			
-			# Configure joint properties
-			drag_joint.length = 0  # Want the object to try to stay at mouse position
-			drag_joint.rest_length = 0
-			drag_joint.stiffness = SPRING_STIFFNESS
-			drag_joint.damping = SPRING_DAMPING
-			
-			# Set the anchor points relative to each body
-			drag_joint.bias = 0.9  # High bias for better following
-			
-			print("Joint created between anchor and body")
+			_create_drag_joint(world_pos)
 		else:
 			print("Found object is not a RigidBody2D")
 	else:
 		print("No objects found at click position")
+
+func _create_drag_joint(world_pos: Vector2) -> void:
+	# Lock rotation while dragging
+	dragged_body.lock_rotation = true
+	
+	# Create anchor point for the joint
+	var anchor = StaticBody2D.new()
+	add_child(anchor)
+	anchor.global_position = world_pos
+	
+	# Create spring joint
+	drag_joint = DampedSpringJoint2D.new()
+	add_child(drag_joint)
+	
+	# Connect the joint between the static anchor and the dragged body
+	drag_joint.node_a = anchor.get_path()
+	drag_joint.node_b = dragged_body.get_path()
+	
+	# Configure joint properties
+	drag_joint.length = 0  # Want the object to try to stay at mouse position
+	drag_joint.rest_length = 0
+	drag_joint.stiffness = SPRING_STIFFNESS
+	drag_joint.damping = SPRING_DAMPING
+	
+	# Set the anchor points relative to each body
+	drag_joint.bias = 0.9  # High bias for better following
 
 func _end_drag() -> void:
 	print("Ending drag")
@@ -217,6 +276,7 @@ func _end_drag() -> void:
 		dragged_body.angular_damp = original_angular_damp
 		dragged_body.linear_damp = original_linear_damp
 		dragged_body.lock_rotation = false
+		waiting_for_pin = true  # Now we're ready to create one pin
 		dragged_body = null
 	
 	if drag_joint:

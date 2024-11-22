@@ -1,10 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://btn81bl1by7oi"]
+[gd_scene load_steps=6 format=3 uid="uid://btn81bl1by7oi"]
 
 [ext_resource type="Script" path="res://Scenes/game.gd" id="1_fgcac"]
 [ext_resource type="Texture2D" uid="uid://xfwcouag22f6" path="res://Scenes/Junk/Sprites/turf.webp" id="1_v8erb"]
 [ext_resource type="PackedScene" uid="uid://0fqioaaax8ef" path="res://Scenes/ui.tscn" id="3_mffox"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_bad3i"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wgdr5"]
+size = Vector2(100, 4000)
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_fgcac")
@@ -63,3 +66,17 @@ texture = ExtResource("1_v8erb")
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="UI" parent="." instance=ExtResource("3_mffox")]
+
+[node name="LeftFunnelSide" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftFunnelSide"]
+position = Vector2(-1834, -318)
+rotation = -0.837758
+shape = SubResource("RectangleShape2D_wgdr5")
+
+[node name="RightFunnelSide" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightFunnelSide"]
+position = Vector2(1768, -282)
+rotation = 0.837758
+shape = SubResource("RectangleShape2D_wgdr5")
