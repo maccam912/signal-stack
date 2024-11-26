@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://lq760phhacx7"]
+
+[ext_resource type="Texture2D" uid="uid://cj8eqc0fjufl6" path="res://Scenes/Junk/Sprites/car3.png" id="1_0ka55"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_figop"]
+friction = 0.7
+bounce = 0.1
+
+[node name="Car3" type="RigidBody2D"]
+mass = 100.0
+physics_material_override = SubResource("PhysicsMaterial_figop")
+
+[node name="Car3" type="Sprite2D" parent="."]
+texture = ExtResource("1_0ka55")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-356, 23, -153, -6, -70, -81, 140, -85, 216, -69, 326, -6, 384, 9, 394, 75, 360, 100, 314, 110, 306, 169, 251, 184, 214, 133, -11, 159, -28, 215, -103, 226, -144, 161, -209, 172, -219, 187, -281, 190, -380, 101)

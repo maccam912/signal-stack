@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bqsg3j5bk67kt"]
 
-[ext_resource type="Texture2D" uid="uid://cxbj4tyv6t6ds" path="res://Scenes/Junk/Sprites/car.png" id="1_vthv5"]
+[ext_resource type="Texture2D" uid="uid://cxbj4tyv6t6ds" path="res://Scenes/Junk/Sprites/car.png" id="1_dinok"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0bnar"]
 friction = 0.7
@@ -11,7 +11,7 @@ mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_0bnar")
 
 [node name="Car" type="Sprite2D" parent="."]
-texture = ExtResource("1_vthv5")
+texture = ExtResource("1_dinok")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(-444, 39, -284, -14, -192, -132, 129, -153, 227, -31, 421, -2, 440, 90, 404, 110, 394, 195, 335, 222, 285, 178, 8, 243, -18, 311, -96, 341, -171, 308, -178, 234, -331, 271, -408, 214)

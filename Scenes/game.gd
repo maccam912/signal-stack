@@ -47,8 +47,13 @@ var body_joints = {}
 
 # Spawn stack state
 var is_spawning = false
-var objects_to_spawn = 20
+var cars_per_row = 10
+var num_rows = 2
+var objects_to_spawn = cars_per_row * num_rows
 var grid_points: Array[Vector2] = []
+var car_spacing = 1024.0  # Spacing between cars in pixels
+var row_spacing = 1024.0  # Spacing between rows
+var ground_height = 500.0  # Height above ground for cars
 
 const scenes = [
 	#preload("res://Scenes/Junk/Umbrella.tscn"),
@@ -59,8 +64,11 @@ const scenes = [
 	#preload("res://Scenes/Junk/Fence.tscn"),
 	#preload("res://Scenes/Junk/Beachball.tscn"),
 	#preload("res://Scenes/Junk/couch.tscn"),
-	preload("res://car.tscn"),
-	preload("res://car2.tscn"),
+	preload("res://Scenes/Junk/car.tscn"),
+	preload("res://Scenes/Junk/car_2.tscn"),
+	preload("res://Scenes/Junk/car_3.tscn"),
+	preload("res://Scenes/Junk/car_4.tscn"),
+	preload("res://Scenes/Junk/car_5.tscn"),
 ]
 
 const antenna = preload("res://Scenes/Junk/Antenna.tscn")
@@ -83,25 +91,19 @@ func _ready() -> void:
 	connect_rigid_bodies()
 
 func generate_grid_points() -> void:
-	var rows = 5  # More rows for increased vertical spacing
-	var cols = 2   # Only two columns as requested
-	var x_start = -1000.0  # Start further left to give more horizontal room
-	var x_spacing = 1000.0  # Increased space between columns
-	var y_start = 0.0
-	var y_end = -3000.0   # Increased vertical range for more spacing
+	var x_start = -(cars_per_row - 1) * car_spacing / 2  # Center the row of cars
 	
-	var y_step = (y_end - y_start) / (rows - 1)
-	
-	for i in range(rows):
-		for j in range(cols):
-			var x = x_start + (j * x_spacing)
-			var y = y_start + (i * y_step)
-			grid_points.append(Vector2(x, y))
+	# Generate two rows of points
+	for row in range(num_rows):
+		var row_height = ground_height - (row * row_spacing)
+		for col in range(cars_per_row):
+			var x = x_start + (col * car_spacing)
+			grid_points.append(Vector2(x, row_height))
 	
 	# Spawn antenna at the top
 	antenna_instance = antenna.instantiate()
 	add_child(antenna_instance)
-	antenna_instance.position = Vector2(0, y_end - 100)  # Place antenna above the highest row
+	antenna_instance.position = Vector2(0, ground_height - (row_spacing * 2))  # Place antenna above both rows
 	if antenna_instance is RigidBody2D:
 		antenna_instance.add_to_group("rigid_bodies")
 
@@ -303,13 +305,22 @@ func _physics_process(_delta: float) -> void:
 	
 	# Check for objects that are too far from center and despawn them
 	var rigid_bodies = get_tree().get_nodes_in_group("rigid_bodies")
+	var center_x = 0.0
+	var despawn_distance = car_spacing * 15  # This gives roughly 10 cars worth of space on each side beyond center
+	
 	for body in rigid_bodies:
 		if body is RigidBody2D:
 			# Skip the antenna since we want to keep it for scoring
 			if body == antenna_instance:
 				continue
 			# Check if object is too far from center on x-axis
-			if abs(body.position.x) > 3000:
+			if abs(body.position.x - center_x) > despawn_distance:
+				# Remove any joints connected to this body before despawning
+				if body_joints.has(body):
+					for joint in body_joints[body]:
+						if is_instance_valid(joint):
+							joint.queue_free()
+					body_joints.erase(body)
 				body.queue_free()
 		
 	# Handle settling and scoring after timer runs out
@@ -330,31 +341,48 @@ func _physics_process(_delta: float) -> void:
 				score_label.text = "[right][color=#990000]Score: %.2f m[/color][/right]" % height_meters
 				score_calculated = true
 
-func _process(_delta: float) -> void:
-	# Update timer display
-	var time_left = timer.time_left
-	timer_label.text = "[color=#990000]%.2f[/color]" % time_left
-	
-	# Find highest rigid body
-	var new_highest_y: float = min(-540, find_highest_rigid_body())
-	# fake it out, give us 20% above the highest
-	var height = 1.2 * (base_height - new_highest_y)
-	
-	new_highest_y = base_height - height
-	# Update highest_y with some smoothing
-	highest_y = lerp(highest_y, new_highest_y, _delta * zoom_speed)
-	
-	# Calculate required zoom to keep bottom at base_height
-	# and show up to the highest object
-	var height_needed = base_height - highest_y
-	var target_zoom: float = min(min_zoom, 1080.0 / height_needed)  # Changed to min() to allow zooming out
-	# Smoothly adjust zoom
-	camera.zoom = camera.zoom.lerp(Vector2(target_zoom, target_zoom), _delta * zoom_speed)
-	
-	# Adjust camera y position to maintain bottom edge at base_height
-	var target_y: float = (base_height + highest_y) / 2.0
-	camera.position.y = lerp(camera.position.y, target_y, _delta * zoom_speed)
-	
+func _process(delta: float) -> void:
+	if can_interact:
+		# Update timer display
+		var time_left = timer.time_left
+		timer_label.text = "[color=#990000]%.2f[/color]" % time_left
+		
+		# Update camera zoom based on object positions
+		var min_x = INF
+		var max_x = -INF
+		var min_y = INF
+		var max_y = -INF
+		
+		# Find the bounds of all cars
+		for child in get_children():
+			if child is RigidBody2D:
+				min_x = min(min_x, child.position.x)
+				max_x = max(max_x, child.position.x)
+				min_y = min(min_y, child.position.y)
+				max_y = max(max_y, child.position.y)
+		
+		if min_x != INF:
+			# Add padding to the bounds
+			var padding = 200.0
+			var width = (max_x - min_x) + padding * 2
+			var height = (max_y - min_y) + padding * 2
+			
+			# Calculate required zoom to fit all objects
+			var zoom_x = get_viewport_rect().size.x / width
+			var zoom_y = get_viewport_rect().size.y / height
+			var target_zoom = min(zoom_x, zoom_y)
+			
+			# Smoothly interpolate to the target zoom
+			var current_zoom = camera.zoom.x
+			camera.zoom = Vector2.ONE * lerp(current_zoom, target_zoom, delta * 2.0)
+			
+			# Update camera position to center on all objects
+			var target_pos = Vector2(
+				(min_x + max_x) / 2,
+				(min_y + max_y) / 2
+			)
+			camera.position = lerp(camera.position, target_pos, delta * 4.0)
+
 func find_highest_rigid_body() -> float:
 	var highest: float = 540
 	

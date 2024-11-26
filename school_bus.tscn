@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://cqnwnbqawbl22"]
+
+[ext_resource type="Texture2D" uid="uid://og1giysvnhe" path="res://Scenes/Junk/Sprites/bus.png" id="1_iv5lr"]
+
+[node name="SchoolBus" type="RigidBody2D"]
+
+[node name="Bus" type="Sprite2D" parent="."]
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("1_iv5lr")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+scale = Vector2(1.5, 1.5)
+polygon = PackedVector2Array(-398, 300, -352, -157, -237, -229, -146, -243, 383, -110, 407, -77, 424, 208, 375, 212, 364, 288, 315, 298, 296, 245, 105, 285, 78, 382, 2, 390, -27, 320, -189, 329, -217, 351, -269, 352, -300, 316)
