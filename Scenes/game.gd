@@ -51,14 +51,16 @@ var objects_to_spawn = 20
 var grid_points: Array[Vector2] = []
 
 const scenes = [
-	preload("res://Scenes/Junk/Umbrella.tscn"),
-	preload("res://Scenes/Junk/Stopsign.tscn"),
-	preload("res://Scenes/Junk/Safe.tscn"),
-	preload("res://Scenes/Junk/Piano.tscn"),
+	#preload("res://Scenes/Junk/Umbrella.tscn"),
+	#preload("res://Scenes/Junk/Stopsign.tscn"),
+	#preload("res://Scenes/Junk/Safe.tscn"),
+	#preload("res://Scenes/Junk/Piano.tscn"),
 	#preload("res://Scenes/Junk/Robot.tscn"),
-	preload("res://Scenes/Junk/Fence.tscn"),
-	preload("res://Scenes/Junk/Beachball.tscn"),
-	preload("res://Scenes/Junk/couch.tscn"),
+	#preload("res://Scenes/Junk/Fence.tscn"),
+	#preload("res://Scenes/Junk/Beachball.tscn"),
+	#preload("res://Scenes/Junk/couch.tscn"),
+	preload("res://car.tscn"),
+	preload("res://car2.tscn"),
 ]
 
 const antenna = preload("res://Scenes/Junk/Antenna.tscn")
@@ -81,12 +83,12 @@ func _ready() -> void:
 	connect_rigid_bodies()
 
 func generate_grid_points() -> void:
-	var rows = 10  # More rows for increased vertical spacing
+	var rows = 5  # More rows for increased vertical spacing
 	var cols = 2   # Only two columns as requested
-	var x_start = -800.0  # Start from far left
-	var x_spacing = 400.0  # Space between columns
+	var x_start = -1000.0  # Start further left to give more horizontal room
+	var x_spacing = 1000.0  # Increased space between columns
 	var y_start = 0.0
-	var y_end = -2000.0   # Increased vertical range
+	var y_end = -3000.0   # Increased vertical range for more spacing
 	
 	var y_step = (y_end - y_start) / (rows - 1)
 	
@@ -166,6 +168,7 @@ func _on_rigid_body_collision(other_body: RigidBody2D, this_body: RigidBody2D):
 	if not waiting_for_pin:
 		return
 		
+	# Skip if neither body was the last dragged one
 	if this_body != last_dragged_body and other_body != last_dragged_body:
 		return
 	
@@ -174,10 +177,15 @@ func _on_rigid_body_collision(other_body: RigidBody2D, this_body: RigidBody2D):
 		return
 		
 	# Get which body is the last dragged one
-	var sticky_body = this_body if this_body == last_dragged_body else other_body
-	var other = this_body if this_body != last_dragged_body else other_body
+	var sticky_body = last_dragged_body
+	var other = other_body if other_body != last_dragged_body else this_body
 	
 	# Skip if these bodies are already connected
+	if not body_joints.has(sticky_body):
+		body_joints[sticky_body] = []
+	if not body_joints.has(other):
+		body_joints[other] = []
+		
 	for joint in body_joints[sticky_body]:
 		if get_node(joint.node_a) == other or get_node(joint.node_b) == other:
 			return
