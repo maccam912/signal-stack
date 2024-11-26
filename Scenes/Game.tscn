@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://btn81bl1by7oi"]
+[gd_scene load_steps=6 format=3 uid="uid://btn81bl1by7oi"]
 
 [ext_resource type="Script" path="res://Scenes/game.gd" id="1_fgcac"]
-[ext_resource type="Texture2D" uid="uid://xfwcouag22f6" path="res://Scenes/Junk/Sprites/turf.webp" id="1_v8erb"]
+[ext_resource type="Texture2D" uid="uid://bnfmbj5tuvdo1" path="res://Scenes/Junk/Sprites/dirt.png" id="2_cetsj"]
+[ext_resource type="Texture2D" uid="uid://xtyavj2gth84" path="res://Scenes/Junk/Sprites/grasslayer.png" id="3_3v5ut"]
 [ext_resource type="PackedScene" uid="uid://0fqioaaax8ef" path="res://Scenes/ui.tscn" id="3_mffox"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_bad3i"]
@@ -15,50 +16,64 @@ position = Vector2(0, 400)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
 shape = SubResource("WorldBoundaryShape2D_bad3i")
 
-[node name="GroundSprite" type="Sprite2D" parent="Ground"]
-position = Vector2(0, 180)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_v8erb")
+[node name="Dirt" type="Sprite2D" parent="Ground"]
+texture_repeat = 2
+position = Vector2(0, 2098)
+texture = ExtResource("2_cetsj")
+region_enabled = true
+region_rect = Rect2(-6144, 562, 12288, 4096)
 
-[node name="GroundSprite3" type="Sprite2D" parent="Ground"]
-position = Vector2(-1146, 180)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_v8erb")
+[node name="Grasslayer2" type="Sprite2D" parent="Ground"]
+position = Vector2(1024, -50)
+texture = ExtResource("3_3v5ut")
 
-[node name="GroundSprite2" type="Sprite2D" parent="Ground"]
-position = Vector2(1140, 180)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_v8erb")
+[node name="Grasslayer3" type="Sprite2D" parent="Ground"]
+position = Vector2(-1024, -50)
+texture = ExtResource("3_3v5ut")
 
-[node name="GroundSprite7" type="Sprite2D" parent="Ground"]
-position = Vector2(-3439, 185)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_v8erb")
+[node name="Grasslayer4" type="Sprite2D" parent="Ground"]
+position = Vector2(2048, -50)
+texture = ExtResource("3_3v5ut")
 
-[node name="GroundSprite8" type="Sprite2D" parent="Ground"]
-position = Vector2(-4585, 185)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_v8erb")
+[node name="Grasslayer5" type="Sprite2D" parent="Ground"]
+position = Vector2(-2048, -50)
+texture = ExtResource("3_3v5ut")
 
-[node name="GroundSprite9" type="Sprite2D" parent="Ground"]
-position = Vector2(-2299, 185)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_v8erb")
+[node name="Grasslayer6" type="Sprite2D" parent="Ground"]
+position = Vector2(3072, -50)
+texture = ExtResource("3_3v5ut")
 
-[node name="GroundSprite4" type="Sprite2D" parent="Ground"]
-position = Vector2(3430, 180)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_v8erb")
+[node name="Grasslayer7" type="Sprite2D" parent="Ground"]
+position = Vector2(-3072, -50)
+texture = ExtResource("3_3v5ut")
 
-[node name="GroundSprite5" type="Sprite2D" parent="Ground"]
-position = Vector2(2284, 180)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_v8erb")
+[node name="Grasslayer8" type="Sprite2D" parent="Ground"]
+position = Vector2(4096, -50)
+texture = ExtResource("3_3v5ut")
 
-[node name="GroundSprite6" type="Sprite2D" parent="Ground"]
-position = Vector2(4570, 180)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("1_v8erb")
+[node name="Grasslayer9" type="Sprite2D" parent="Ground"]
+position = Vector2(-4096, -50)
+texture = ExtResource("3_3v5ut")
+
+[node name="Grasslayer10" type="Sprite2D" parent="Ground"]
+position = Vector2(5120, -50)
+texture = ExtResource("3_3v5ut")
+
+[node name="Grasslayer11" type="Sprite2D" parent="Ground"]
+position = Vector2(-5120, -50)
+texture = ExtResource("3_3v5ut")
+
+[node name="Grasslayer12" type="Sprite2D" parent="Ground"]
+position = Vector2(6144, -50)
+texture = ExtResource("3_3v5ut")
+
+[node name="Grasslayer13" type="Sprite2D" parent="Ground"]
+position = Vector2(-6144, -50)
+texture = ExtResource("3_3v5ut")
+
+[node name="Grasslayer" type="Sprite2D" parent="Ground"]
+position = Vector2(0, -50)
+texture = ExtResource("3_3v5ut")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 

@@ -56,14 +56,6 @@ var row_spacing = 1024.0  # Spacing between rows
 var ground_height = 500.0  # Height above ground for cars
 
 const scenes = [
-	#preload("res://Scenes/Junk/Umbrella.tscn"),
-	#preload("res://Scenes/Junk/Stopsign.tscn"),
-	#preload("res://Scenes/Junk/Safe.tscn"),
-	#preload("res://Scenes/Junk/Piano.tscn"),
-	#preload("res://Scenes/Junk/Robot.tscn"),
-	#preload("res://Scenes/Junk/Fence.tscn"),
-	#preload("res://Scenes/Junk/Beachball.tscn"),
-	#preload("res://Scenes/Junk/couch.tscn"),
 	preload("res://Scenes/Junk/car.tscn"),
 	preload("res://Scenes/Junk/car_2.tscn"),
 	preload("res://Scenes/Junk/car_3.tscn"),

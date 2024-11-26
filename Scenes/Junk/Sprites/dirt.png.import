@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://da32yhdiujkiy"
-path="res://.godot/imported/safe.webp-eb53171ee1d57fa06ca7b19168627448.ctex"
+uid="uid://bnfmbj5tuvdo1"
+path="res://.godot/imported/dirt.png-1c171c62b571465e59c4abd44170a760.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Scenes/Junk/Sprites/safe.webp"
-dest_files=["res://.godot/imported/safe.webp-eb53171ee1d57fa06ca7b19168627448.ctex"]
+source_file="res://Scenes/Junk/Sprites/dirt.png"
+dest_files=["res://.godot/imported/dirt.png-1c171c62b571465e59c4abd44170a760.ctex"]
 
 [params]
 

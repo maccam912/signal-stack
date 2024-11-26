@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://fj7t0jlbpmeo"
-path="res://.godot/imported/robotupperarm.webp-15feb4a777d4c692bd868f6a8af249e6.ctex"
+uid="uid://xtyavj2gth84"
+path="res://.godot/imported/grasslayer.png-2bb167d39f9edde4ba6b71f3c4b44bd3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Scenes/Junk/Sprites/robotupperarm.webp"
-dest_files=["res://.godot/imported/robotupperarm.webp-15feb4a777d4c692bd868f6a8af249e6.ctex"]
+source_file="res://Scenes/Junk/Sprites/grasslayer.png"
+dest_files=["res://.godot/imported/grasslayer.png-2bb167d39f9edde4ba6b71f3c4b44bd3.ctex"]
 
 [params]
 

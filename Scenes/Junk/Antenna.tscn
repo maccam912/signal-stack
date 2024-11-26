@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ph8po370jfw4"]
 
-[ext_resource type="Texture2D" uid="uid://cn2mrgjapkhq6" path="res://Scenes/Junk/Sprites/antenna.webp" id="1_u7n82"]
+[ext_resource type="Texture2D" uid="uid://dacukybv0k60p" path="res://Scenes/Junk/Sprites/antenna.png" id="1_a37ht"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r2qxf"]
 
@@ -9,8 +9,8 @@ mass = 3.0
 physics_material_override = SubResource("PhysicsMaterial_r2qxf")
 
 [node name="Antenna" type="Sprite2D" parent="."]
-scale = Vector2(0.3, 0.3)
-texture = ExtResource("1_u7n82")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_a37ht")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(-132, -20, -92, -34, -91, -78, 110, -148, 127, -139, 129, -51, 114, -33, 28, 6, 28, 62, 117, 85, 117, 106, 1, 145, -121, 119, -120, 96, -16, 67, -16, 20, -77, 46, -88, 40, -90, -6, -121, 9, -134, -5)
+polygon = PackedVector2Array(-55, -170, -13, -139, 74, -171, 115, -167, 132, -135, 115, -92, 17, 12, 29, 162, 53, 167, 53, 182, -99, 185, -109, 170, -61, 39, -129, 51, -163, 45, -174, 18, -158, -15, -115, -64, -68, -100, -76, -157)
