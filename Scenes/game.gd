@@ -3,7 +3,7 @@ extends Node2D
 @onready var camera: Camera2D = $Camera2D
 @onready var timer: Timer = $UI/Timer
 @onready var timer_label: RichTextLabel = $UI/Timer/Label
-@onready var score_label: RichTextLabel = $UI/Score
+@onready var score_label: RichTextLabel = $UI/MarginContainer/Score
 
 var highest_y: float = 0.0
 var base_height: float = 540.0  # Bottom of the frame
@@ -330,7 +330,9 @@ func _physics_process(_delta: float) -> void:
 				var height = base_height - antenna_instance.position.y  # Convert y coordinate to height
 				# Convert pixels to meters (500 pixels = 2 meters)
 				var height_meters = (height / 500.0) * 2.0
-				score_label.text = "[right][color=#990000]Score: %.2f m[/color][/right]" % height_meters
+				# Calculate line-of-sight distance (using simplified formula d ≈ 3.57√h where h is in meters)
+				var los_distance = 4.12 * sqrt(height_meters)
+				score_label.text = "[right][color=#990000]Height: %.2f m\nSignal: %.2f km[/color][/right]" % [height_meters, los_distance]
 				score_calculated = true
 
 func _process(delta: float) -> void:

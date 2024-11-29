@@ -13,21 +13,21 @@ gradient = SubResource("Gradient_gx2vy")
 default_font = ExtResource("2_b4se0")
 default_font_size = 120
 
-[sub_resource type="Theme" id="Theme_pyux3"]
-default_font = ExtResource("2_b4se0")
-default_font_size = 120
-
 [sub_resource type="Theme" id="Theme_i2hfr"]
 default_font = ExtResource("2_b4se0")
 default_font_size = 110
+
+[sub_resource type="Theme" id="Theme_pyux3"]
+default_font = ExtResource("2_b4se0")
+default_font_size = 120
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_ujk0v")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 offset_left = -9.0
-offset_top = 3.0
-offset_right = 1932.0
+offset_top = -10.0
+offset_right = 1948.0
 offset_bottom = 164.0
 texture = SubResource("GradientTexture1D_fftky")
 
@@ -41,20 +41,6 @@ offset_bottom = 164.0
 theme = SubResource("Theme_xcij1")
 bbcode_enabled = true
 text = "20.00"
-fit_content = true
-scroll_active = false
-
-[node name="Score" type="RichTextLabel" parent="."]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -1421.0
-offset_top = 13.0
-offset_right = -79.0
-offset_bottom = 159.0
-grow_horizontal = 0
-theme = SubResource("Theme_pyux3")
-bbcode_enabled = true
 fit_content = true
 scroll_active = false
 
@@ -72,3 +58,22 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_i2hfr")
 text = "Try again?"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer"]
+layout_mode = 2
+texture = SubResource("GradientTexture1D_fftky")
+
+[node name="Score" type="RichTextLabel" parent="MarginContainer"]
+layout_mode = 2
+theme = SubResource("Theme_pyux3")
+bbcode_enabled = true
+fit_content = true
+scroll_active = false

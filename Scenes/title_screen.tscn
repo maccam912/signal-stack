@@ -1,0 +1,94 @@
+[gd_scene load_steps=8 format=3 uid="uid://bi3pgrvl1rflr"]
+
+[ext_resource type="Script" path="res://Scenes/title_screen.gd" id="1_bjccj"]
+[ext_resource type="Texture2D" uid="uid://iivtaagmvouj" path="res://Images/logo.png" id="1_wqf7w"]
+[ext_resource type="FontFile" uid="uid://b1akcss3aboij" path="res://Fonts/OCRA.ttf" id="2_2pgph"]
+[ext_resource type="Texture2D" uid="uid://p6kjsqrs806t" path="res://Images/carpile.jpg" id="2_4xey5"]
+
+[sub_resource type="Theme" id="Theme_24684"]
+default_font = ExtResource("2_2pgph")
+
+[sub_resource type="Theme" id="Theme_16gry"]
+default_font = ExtResource("2_2pgph")
+
+[sub_resource type="Theme" id="Theme_1lwri"]
+default_font = ExtResource("2_2pgph")
+
+[node name="TitleScreen" type="Node"]
+script = ExtResource("1_bjccj")
+
+[node name="Carpile" type="Sprite2D" parent="."]
+position = Vector2(982, 509)
+scale = Vector2(2.12939, 2.12939)
+texture = ExtResource("2_4xey5")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Logo" type="Sprite2D" parent="Control"]
+position = Vector2(504, 718)
+texture = ExtResource("1_wqf7w")
+
+[node name="PlayButton" type="Button" parent="Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 330.0
+offset_top = 130.0
+offset_right = 616.0
+offset_bottom = 266.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_24684")
+theme_override_colors/font_color = Color(0.964053, 0.346732, 0.305066, 1)
+theme_override_font_sizes/font_size = 96
+text = "Play"
+
+[node name="Volume" type="HSlider" parent="Control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 319.0
+offset_top = 427.0
+offset_right = 567.0
+offset_bottom = 508.0
+grow_horizontal = 2
+value = 50.0
+tick_count = 100
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control"]
+layout_mode = 0
+offset_left = 919.0
+offset_top = 452.0
+offset_right = 1253.0
+offset_bottom = 493.0
+theme = SubResource("Theme_16gry")
+theme_override_colors/default_color = Color(0.603003, 0.214926, 0.195438, 1)
+theme_override_font_sizes/normal_font_size = 26
+text = "Rock Out (volume)"
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="Control"]
+layout_mode = 0
+offset_left = 297.0
+offset_top = 108.0
+offset_right = 1600.0
+offset_bottom = 445.0
+theme = SubResource("Theme_1lwri")
+theme_override_colors/default_color = Color(0.550962, 0.178952, 0.191203, 1)
+theme_override_font_sizes/normal_font_size = 31
+bbcode_enabled = true
+text = "[center]Click and drag the cars to stack them up
+put the red antenna on top to get it as high as possible for the best signal.
+
+Why cars? Who knows. Because they make for fun songs.
+
+A score over 12.5 km is pretty good.[/center]"
